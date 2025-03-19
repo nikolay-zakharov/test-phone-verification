@@ -1,0 +1,25 @@
+# see https://symfony.com/doc/current/reference/configuration/framework.html
+framework:
+    secret: '%env(APP_SECRET)%'
+
+    # Note that the session will be started ONLY if you read or write from it.
+    session: true
+
+    #esi: true
+    #fragments: true
+
+    rate_limiter:
+        phone_verification_request_code:
+            policy: 'fixed_window'
+            limit: 3
+            interval: '10 minutes'
+        phone_verification_verify:
+            policy: 'fixed_window'
+            limit: 3
+            interval: '10 seconds'
+
+when@test:
+    framework:
+        test: true
+        session:
+            storage_factory_id: session.storage.factory.mock_file

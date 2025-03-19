@@ -1,0 +1,12 @@
+nelmio_api_doc:
+    documentation:
+        servers:
+          - url: http://localhost
+            description: API over HTTP
+        info:
+            title: Test Task
+            description: by Nikolay Zakharov
+            version: 1.0.0
+    areas: # to filter documented areas
+        path_patterns:
+            - ^/api(?!/doc$) # Accepts routes under /api except /api/doc
