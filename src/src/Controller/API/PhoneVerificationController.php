@@ -29,7 +29,7 @@ class PhoneVerificationController
         RateLimiterFactory $phoneVerificationRequestCodeLimiter,
     ): JsonResponse
     {
-        /** @var \DateTimeImmutable|null $verificationLockedUntil */
+        /** @var int|null $verificationLockedUntil */
         $verificationLockedUntil = $this->redisCache->get(
             key: 'verification-locked-' . $dto->phone,
             callback: function (ItemInterface $item) {
