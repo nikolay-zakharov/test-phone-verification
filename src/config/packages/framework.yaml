@@ -16,7 +16,7 @@ framework:
         phone_verification_verify:
             policy: 'fixed_window'
             limit: 3
-            interval: '10 seconds'
+            interval: '30 seconds'
 
 when@test:
     framework:

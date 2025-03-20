@@ -2,6 +2,7 @@
 
 namespace App\EventListener;
 
+use App\Exception\MethodLockedException;
 use Symfony\Component\EventDispatcher\Attribute\AsEventListener;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
@@ -21,19 +22,22 @@ final class ExceptionListener
         $request = $event->getRequest();
 
         if (str_starts_with($request->getRequestUri(), '/api/')) {
-            $response = new JsonResponse([
-                'message' => $exception->getMessage(),
-                'class' => $exception::class,
-            ]);
-
-            if ($exception instanceof RateLimitExceededException) {
+            $response = new JsonResponse();
+            if ($exception instanceof MethodLockedException) {
+                $response->setStatusCode(Response::HTTP_TOO_MANY_REQUESTS);
+                $response->setData([
+                    'errors' => sprintf(
+                        'Banned for %d seconds',
+                        $exception->getSeconds(),
+                    ),
+                ]);
+            } elseif ($exception instanceof RateLimitExceededException) {
                 $response->setStatusCode(Response::HTTP_TOO_MANY_REQUESTS);
                 $response->setData([
                     'errors' => sprintf(
                         'Rate limit exceeded. Try after %d seconds',
-                        $exception->getRateLimit()->getRetryAfter()->getTimestamp()
-                         - new \DateTimeImmutable()->getTimestamp(),
-                    )
+                        $exception->getRateLimit()->getRetryAfter()->getTimestamp() - new \DateTimeImmutable()->getTimestamp(),
+                    ),
                 ]);
             } elseif ($exception instanceof UnprocessableEntityHttpException) {
                 /** @var ValidationFailedException $validationException */
