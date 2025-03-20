@@ -62,7 +62,7 @@ class PhoneVerificationController
                     );
                 }
 
-                $item->expiresAfter(2);
+                $item->expiresAfter(60);
                 $code = random_int(1000, 9999);
 
                 // todo: send SMS here (queue it)
