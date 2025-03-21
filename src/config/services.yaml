@@ -25,7 +25,7 @@ services:
 
     App\Infrastructure\PhoneValidationConfig:
         arguments:
-            - 60
+            - '60'
             - '1 hour'
 
     # add more service definitions when explicit configuration is needed
