@@ -2,7 +2,7 @@
 
 namespace App\Exception;
 
-class MethodLockedException extends \RuntimeException
+class TemporarilyBannedException extends \RuntimeException
 {
     public function __construct(private readonly int $seconds, string $message = "", int $code = 0, ?\Throwable $previous = null)
     {

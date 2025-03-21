@@ -2,7 +2,7 @@
 
 namespace App\EventListener;
 
-use App\Exception\MethodLockedException;
+use App\Exception\TemporarilyBannedException;
 use Symfony\Component\EventDispatcher\Attribute\AsEventListener;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
@@ -23,7 +23,7 @@ final class ExceptionListener
 
         if (str_starts_with($request->getRequestUri(), '/api/')) {
             $response = new JsonResponse();
-            if ($exception instanceof MethodLockedException) {
+            if ($exception instanceof TemporarilyBannedException) {
                 $response->setStatusCode(Response::HTTP_TOO_MANY_REQUESTS);
                 $response->setData([
                     'errors' => sprintf(

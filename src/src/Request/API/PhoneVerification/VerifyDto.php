@@ -13,7 +13,7 @@ class VerifyDto
 
         #[Assert\Regex(pattern: '/^\d{4}$/', message: 'Invalid code. 4 digits expected')]
         #[Assert\NotNull(message: 'Required')]
-        public readonly ?int $code,
+        public readonly ?string $code,
     ) {
     }
 }
