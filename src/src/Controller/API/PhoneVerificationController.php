@@ -16,13 +16,13 @@ use Symfony\Component\Routing\Attribute\Route;
 
 readonly class PhoneVerificationController
 {
-    public function __construct(private PhoneVerificationService $phoneValidator) {}
+    public function __construct(private PhoneVerificationService $phoneVerificator) {}
 
     #[OA\Tag(name: 'Phone verification')]
     #[Route(path: '/api/phone-verification/request-code', methods: ['POST'])]
     public function requestCode(#[MapRequestPayload] RequestCodeDto $dto): JsonResponse
     {
-        $code = $this->phoneValidator->getActualCode(
+        $code = $this->phoneVerificator->getActualCode(
             phone: $dto->phone,
             codeGenerator: fn () => random_int(1000, 9999),
             userNotificator: function ($phone, $code) {
@@ -43,7 +43,7 @@ readonly class PhoneVerificationController
     public function verify(#[MapRequestPayload] VerifyDto $dto, UserService $userService): JsonResponse
     {
         try {
-            $this->phoneValidator->ensureValidated(
+            $this->phoneVerificator->ensureVerified(
                 phone: $dto->phone,
                 code: $dto->code,
             );

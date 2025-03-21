@@ -18,5 +18,5 @@ framework:
 
         # Namespaced pools use the above "app" backend by default
         pools:
-            phone.validator.cache:
+            phone.verificator.cache:
                 adapter: cache.app

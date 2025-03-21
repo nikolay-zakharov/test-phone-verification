@@ -14,7 +14,7 @@ readonly class PhoneVerificationService
 {
     public function __construct(
         private PhoneValidationConfig $config,
-        private CacheInterface $phoneValidatorCache,
+        private CacheInterface $phoneVerificatorCache,
         private RateLimiterFactory $phoneVerificationRequestCodeLimiter,
         private RateLimiterFactory $phoneVerificationVerifyLimiter,
     ) {
@@ -22,7 +22,7 @@ readonly class PhoneVerificationService
 
     public function getActualCode(string $phone, callable $codeGenerator, ?callable $userNotificator = null): string
     {
-        $unbannedAtTimestamp = $this->phoneValidatorCache->get(
+        $unbannedAtTimestamp = $this->phoneVerificatorCache->get(
             key: 'verification-locked-' . $phone,
             callback: function (ItemInterface $item) {
                 $item->expiresAfter(1);
@@ -34,15 +34,15 @@ readonly class PhoneVerificationService
             throw new TemporarilyBannedException($unbannedAtTimestamp - new \DateTimeImmutable()->getTimestamp());
         }
 
-        return $this->phoneValidatorCache->get(
+        return $this->phoneVerificatorCache->get(
             key: 'verification-' . $phone,
             callback: function (ItemInterface $item) use ($codeGenerator, $userNotificator, $phone) {
                 $limiter = $this->phoneVerificationRequestCodeLimiter->create($phone);
                 if (!$limiter->consume()->isAccepted()) {
                     $unbannedAt = new \DateTime()->add(\DateInterval::createFromDateString($this->config->banTime));
 
-                    $this->phoneValidatorCache->delete('verification-locked-' . $phone);
-                    $this->phoneValidatorCache->get(
+                    $this->phoneVerificatorCache->delete('verification-locked-' . $phone);
+                    $this->phoneVerificatorCache->get(
                         key: 'verification-locked-' . $phone,
                         callback: function (ItemInterface $item) use ($unbannedAt) {
                             $item->expiresAfter($unbannedAt->getTimestamp() - new \DateTimeImmutable()->getTimestamp());
@@ -68,14 +68,14 @@ readonly class PhoneVerificationService
         );
     }
 
-    public function ensureValidated(string $phone, string $code): void
+    public function ensureVerified(string $phone, string $code): void
     {
         $limiter = $this->phoneVerificationVerifyLimiter->create($phone);
         $limiter->consume()->ensureAccepted();
 
         $key = 'verification-' . $phone;
-        if (null === $actualCode = $this->phoneValidatorCache->get(key: $key, callback: fn (ItemInterface $item) => null)) {
-            $this->phoneValidatorCache->delete($key);
+        if (null === $actualCode = $this->phoneVerificatorCache->get(key: $key, callback: fn (ItemInterface $item) => null)) {
+            $this->phoneVerificatorCache->delete($key);
             throw new CodeExpiredException();
         }
 
@@ -83,7 +83,7 @@ readonly class PhoneVerificationService
             throw new InvalidCodeException();
         }
 
-        $this->phoneValidatorCache->delete($key);
+        $this->phoneVerificatorCache->delete($key);
         $limiter->reset();
     }
 }
