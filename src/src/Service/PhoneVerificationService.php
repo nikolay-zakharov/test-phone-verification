@@ -5,7 +5,7 @@ namespace App\Service;
 use App\Exception\CodeExpiredException;
 use App\Exception\InvalidCodeException;
 use App\Exception\TemporarilyBannedException;
-use App\Infrastructure\PhoneValidationConfig;
+use App\Infrastructure\PhoneVerificationConfig;
 use Symfony\Component\RateLimiter\RateLimiterFactory;
 use Symfony\Contracts\Cache\CacheInterface;
 use Symfony\Contracts\Cache\ItemInterface;
@@ -13,7 +13,7 @@ use Symfony\Contracts\Cache\ItemInterface;
 readonly class PhoneVerificationService
 {
     public function __construct(
-        private PhoneValidationConfig $config,
+        private PhoneVerificationConfig $config,
         private CacheInterface $phoneVerificatorCache,
         private RateLimiterFactory $phoneVerificationRequestCodeLimiter,
         private RateLimiterFactory $phoneVerificationVerifyLimiter,

@@ -2,7 +2,7 @@
 
 namespace App\Infrastructure;
 
-class PhoneValidationConfig
+class PhoneVerificationConfig
 {
     public private(set) int $codeLifetime;
     public private(set) string $banTime;
