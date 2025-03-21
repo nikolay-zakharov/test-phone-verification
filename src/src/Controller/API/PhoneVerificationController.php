@@ -6,7 +6,7 @@ use App\Exception\CodeExpiredException;
 use App\Exception\InvalidCodeException;
 use App\Request\API\PhoneVerification\RequestCodeDto;
 use App\Request\API\PhoneVerification\VerifyDto;
-use App\Service\PhoneValidationService;
+use App\Service\PhoneVerificationService;
 use App\Service\UserService;
 use OpenApi\Attributes as OA;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -16,7 +16,7 @@ use Symfony\Component\Routing\Attribute\Route;
 
 readonly class PhoneVerificationController
 {
-    public function __construct(private PhoneValidationService $phoneValidator) {}
+    public function __construct(private PhoneVerificationService $phoneValidator) {}
 
     #[OA\Tag(name: 'Phone verification')]
     #[Route(path: '/api/phone-verification/request-code', methods: ['POST'])]

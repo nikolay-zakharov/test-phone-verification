@@ -10,7 +10,7 @@ use Symfony\Component\RateLimiter\RateLimiterFactory;
 use Symfony\Contracts\Cache\CacheInterface;
 use Symfony\Contracts\Cache\ItemInterface;
 
-readonly class PhoneValidationService
+readonly class PhoneVerificationService
 {
     public function __construct(
         private PhoneValidationConfig $config,
