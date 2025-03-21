@@ -23,7 +23,7 @@ services:
         resource: '../src/Controller/'
         tags: [ 'controller.service_arguments' ]
 
-    App\Infrastructure\PhoneValidationConfig:
+    App\Infrastructure\PhoneVerificationConfig:
         arguments:
             - '60'
             - '1 hour'
