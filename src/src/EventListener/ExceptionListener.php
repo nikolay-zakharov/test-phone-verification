@@ -2,7 +2,6 @@
 
 namespace App\EventListener;
 
-use App\Exception\TemporarilyBannedException;
 use Symfony\Component\EventDispatcher\Attribute\AsEventListener;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
@@ -11,7 +10,6 @@ use Symfony\Component\HttpKernel\Exception\HttpExceptionInterface;
 use Symfony\Component\HttpKernel\Exception\UnprocessableEntityHttpException;
 use Symfony\Component\HttpKernel\KernelEvents;
 use Symfony\Component\Messenger\Exception\ValidationFailedException;
-use Symfony\Component\RateLimiter\Exception\RateLimitExceededException;
 
 final class ExceptionListener
 {
@@ -23,23 +21,8 @@ final class ExceptionListener
 
         if (str_starts_with($request->getRequestUri(), '/api/')) {
             $response = new JsonResponse();
-            if ($exception instanceof TemporarilyBannedException) {
-                $response->setStatusCode(Response::HTTP_TOO_MANY_REQUESTS);
-                $response->setData([
-                    'errors' => sprintf(
-                        'Banned for %d seconds',
-                        $exception->getSeconds(),
-                    ),
-                ]);
-            } elseif ($exception instanceof RateLimitExceededException) {
-                $response->setStatusCode(Response::HTTP_TOO_MANY_REQUESTS);
-                $response->setData([
-                    'errors' => sprintf(
-                        'Rate limit exceeded. Try after %d seconds',
-                        $exception->getRateLimit()->getRetryAfter()->getTimestamp() - new \DateTimeImmutable()->getTimestamp(),
-                    ),
-                ]);
-            } elseif ($exception instanceof UnprocessableEntityHttpException) {
+            
+            if ($exception instanceof UnprocessableEntityHttpException) {
                 /** @var ValidationFailedException $validationException */
                 $validationException = $exception->getPrevious();
                 $errors = [];
