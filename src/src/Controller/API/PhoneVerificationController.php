@@ -24,8 +24,8 @@ readonly class PhoneVerificationController
     {
         $code = $this->phoneVerificator->getActualCode(
             phone: $dto->phone,
-            codeGenerator: fn () => random_int(1000, 9999),
-            userNotificator: function ($phone, $code) {
+            codeGenerator: fn (): string => (string) random_int(1000, 9999),
+            userNotificator: function (string $phone, string $code) {
 
                 // todo: send the $code here
 
